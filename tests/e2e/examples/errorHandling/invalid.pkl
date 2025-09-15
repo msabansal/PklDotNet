@@ -1,0 +1,9 @@
+// File with syntax error for error handling tests
+appName = "ErrorTest"
+version = "1.0.0"
+
+// Missing closing brace
+database {
+  host = "localhost"
+  port = 5432
+  // Missing closing brace here should cause compilation error

@@ -1,0 +1,75 @@
+// More complex configuration for multi-format testing
+import "pkl:settings"
+
+application {
+  name = "MultiFormatTest"
+  version = "2.1.0"
+  description = "Testing multiple output formats"
+}
+
+server {
+  host = "0.0.0.0"
+  port = 8080
+  ssl {
+    enabled = true
+    certPath = "/etc/ssl/certs/app.crt"
+    keyPath = "/etc/ssl/private/app.key"
+  }
+}
+
+logging {
+  level = "INFO"
+  outputs {
+    "console"
+    "file"
+  }
+  fileOutput {
+    path = "/var/log/app.log"
+    maxSize = "100MB"
+    maxFiles = 5
+  }
+}
+
+database {
+  type = "postgresql"
+  config {
+    host = "db.example.com"
+    port = 5432
+    database = "production_db"
+    username = "app_user"
+    password = "secure_password"
+    sslMode = "require"
+    connectionPool {
+      minSize = 5
+      maxSize = 20
+      idleTimeout = "10m"
+    }
+  }
+}
+
+redis {
+  host = "redis.example.com"
+  port = 6379
+  database = 0
+  password = "redis_password"
+  timeout = "5s"
+}
+
+features {
+  "authentication"
+  "authorization"
+  "metrics"
+  "tracing"
+}
+
+metrics {
+  enabled = true
+  port = 9090
+  path = "/metrics"
+}
+
+healthCheck {
+  enabled = true
+  path = "/health"
+  interval = "30s"
+}

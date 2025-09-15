@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+
+    <NugetExePath>$(PkgNuGet_CommandLine)\tools\NuGet.exe</NugetExePath>
+    <NugetExePath Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">mono $(NugetExePath)</NugetExePath>
+    <NugetExePath Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">mono $(NugetExePath)</NugetExePath>
+
+    <PklBinariesDirectory>$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)tools</PklBinariesDirectory>
+    <PklExePathWindows>$(PklBinariesDirectory)/$(RuntimeSuffix)/pkl.exe</PklExePathWindows>
+    <PklExePathNonWindows>$(PklBinariesDirectory)/$(RuntimeSuffix)/pkl</PklExePathNonWindows>
+    <BinaryVersion Condition=" '$(BinaryVersion)' == '' ">$(Version)</BinaryVersion>
+    <BinaryName  Condition=" $(RuntimeSuffix) == 'win-x64' ">pkl.exe</BinaryName>
+    <BinaryName  Condition=" $(RuntimeSuffix) != 'win-x64' ">pkl</BinaryName>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NuGet.CommandLine" Version="6.6.2" >
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <NuSpec Include="Package.nuspec" />
+  </ItemGroup>
+
+  
+  <Target Name="DownloadPkl">
+    <Error Text="This project requires the RuntimeSuffix property (/p:RuntimeSuffix=rid in dotnet build) to set explicitly." Condition=" $(RuntimeSuffix) == '' " />
+    
+    <PropertyGroup>
+      <PklScriptPath Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">$(MSBuildProjectDirectory)/scripts/download-pkl-by-rid.ps1</PklScriptPath>
+      <PklScriptPath Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' != 'true'">$(MSBuildProjectDirectory)/scripts/download-pkl-by-rid.sh</PklScriptPath>
+      <PklScriptCommand Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">pwsh.exe -ExecutionPolicy Bypass -File "$(PklScriptPath)" -Rid "$(RuntimeSuffix)" -OutputFolder "$(PklBinariesDirectory)" -Version "$(BinaryVersion)"</PklScriptCommand>
+      <PklScriptCommand Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' != 'true'">bash "$(PklScriptPath)" "$(RuntimeSuffix)" "$(PklBinariesDirectory)" "$(BinaryVersion)"</PklScriptCommand>
+    </PropertyGroup>
+    
+    <Message Text="Downloading pkl binary for RID: $(RuntimeSuffix)" Importance="high" />
+    <Exec Command="$(PklScriptCommand)" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <Target Name="CreateNugetPackage" AfterTargets="Build" DependsOnTargets="DownloadPkl">
+    <ItemGroup>
+      <PklExecutable Include="$(PklExePathWindows)" Condition=" $(RuntimeSuffix) == 'win-x64' " />
+      <PklExecutable Include="$(PklExePathNonWindows)"  Condition=" $(RuntimeSuffix) != 'win-x64' " />
+    </ItemGroup>
+
+    <Error Text="Unexpected number of pkl executables found: @(PklExecutable->Count())" Condition="@(PklExecutable->Count()) != 1 " />
+
+    <Error Text="This project requires the RuntimeSuffix property (/p:RuntimeSuffix=rid in dotnet build) to set explicitly." Condition=" $(RuntimeSuffix) == '' " />
+    <Exec Command="$(NugetExePath) pack @(NuSpec) -Version $(Version) -NonInteractive -Properties &quot;rid=$(RuntimeSuffix);Configuration=$(Configuration);TargetFramework=$(TargetFramework);Binary=@(PklExecutable);BinaryName=$(BinaryName)&quot; -OutputDirectory $(OutputPath)" 
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+</Project>

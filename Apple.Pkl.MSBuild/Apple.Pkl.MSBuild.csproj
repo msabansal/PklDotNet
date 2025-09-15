@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
+    <!-- disable warnings about assemblies in non-lib paths -->
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <AssemblyName>Apple.Pkl.MSBuild</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Apple.Pkl.MSBuild</RootNamespace>
+    <EnableNuget>true</EnableNuget>
+    <PackageTags>Apple Pkl CLI compiler</PackageTags>
+    <Description>Apple Pkl MSBuild tasks</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/msabansal/PklDotNet.git</RepositoryUrl> 
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <Content Include="build\Apple.Pkl.MSBuild.*" PackagePath="build\" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="buildMultiTargeting\Apple.Pkl.MSBuild.*" PackagePath="buildMultiTargeting\" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- do not upgrade these packages - we need to support msbuild 16 -->
+    <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" Version="17.13.9" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" Version="17.13.9" />
+  </ItemGroup>
+</Project>

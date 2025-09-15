@@ -1,0 +1,83 @@
+<Project TreatAsLocalProperty="TaskRuntimeDirectory;TaskAssembly">
+  <PropertyGroup>
+    <!-- by default run after the Build target -->
+    <PklCompileAfterTargets Condition=" $(PklCompileAfterTargets) == '' ">CoreCompile</PklCompileAfterTargets>
+
+    <!-- default to project OutputPath -->
+    <PklOutputPath Condition=" $(PklOutputPath) == '' ">$(OutputPath)</PklOutputPath>
+    <!-- all files by default will get dumped into the configured output path -->
+    <PklOutputStyle Condition=" $(PklOutputStyle) == '' ">Flat</PklOutputStyle>
+  </PropertyGroup>
+
+  <Target Name="BeforePklCompileCommon">
+    <Error Text="The PklOutputStyle property must be set to either 'Flat' or 'Recursive'." Condition=" ($(PklOutputStyle) != 'Flat') and ($(PklOutputStyle) != 'Recursive') " />
+  </Target>
+
+  <Target Name="BeforePklCompile" Condition=" @(Pkl) != '' " BeforeTargets="PklCompile" DependsOnTargets="BeforePklCompileCommon">
+    
+    <ItemGroup>
+      <_PklResolvedIntermediate Include="@(Pkl)">
+        <!-- default to json format if not specified -->
+        <Format Condition=" %(Pkl.Format) == '' ">json</Format>
+
+        <!-- determine output file extension based on format -->
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == '' ">.json</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'json' ">.json</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'jsonnet' ">.jsonnet</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'pcf' ">.pcf</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'plist' ">.plist</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'properties' ">.properties</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'textproto' ">.textproto</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'xml' ">.xml</_PklOutputFileExtension>
+        <_PklOutputFileExtension Condition=" %(Pkl.Format) == 'yaml' ">.yaml</_PklOutputFileExtension>
+      
+        <!-- in recursive mode, incorporate the file's relative path into the final output path -->
+        <OutputFile Condition=" ($(PklOutputStyle) == 'Recursive') and (%(Pkl.OutputFile) == '') ">$(PklOutputPath)\$([MSBuild]::MakeRelative($(MSBuildProjectDirectory), %(RootDir)%(Directory)%(Filename)%(_PklResolvedIntermediate._PklOutputFileExtension)))</OutputFile>
+        <!-- in flat mode, append the file name to the output path -->
+        <OutputFile Condition=" ($(PklOutputStyle) == 'Flat') and (%(Pkl.OutputFile) == '') ">$(PklOutputPath)\%(FileName)%(_PklResolvedIntermediate._PklOutputFileExtension)</OutputFile>
+      </_PklResolvedIntermediate>
+      <_PklResolved Include="@(_PklResolvedIntermediate)">
+        <OutputFile>$([System.IO.Path]::GetFullPath('%(OutputFile)'))</OutputFile>
+      </_PklResolved>
+
+      <_PklOutputFile Include="%(_PklResolved.OutputFile)" />
+    </ItemGroup>
+
+    <!-- pre-create directories for all the outputs in case they don't exist -->
+    <MakeDir Directories=" %(_PklOutputFile.RootDir)%(Directory)" />
+    <Error Text="The path to the Pkl compiler is not set. Reference the appropriate Azure.Pkl.CommandLine.* package for your runtime or set the PklPath property." Condition=" $(PklPath) == '' " />
+  </Target>
+
+
+  <Target Name="PklCompile" Inputs="@(_PklResolved)" Outputs="%(_PklResolved.OutputFile)" DependsOnTargets="$(PklCompileDependsOn)" AfterTargets="$(PklCompileAfterTargets)" BeforeTargets="$(PklCompileBeforeTargets)">
+    <Pkl SourceFile="%(_PklResolved.FullPath)" OutputFile="%(OutputFile)" ToolExe="$(PklPath)" YieldDuringToolExecution="true" Format="%(Format)" />
+    <Message Importance="High" Text="$(MSBuildProjectName) -&gt; %(_PklResolved.OutputFile)" />
+
+    <ItemGroup>
+      <FileWrites Include="%(_PklResolved.OutputFile)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ComputePklCompiledFilesToPublish" AfterTargets="PrepareForPublish">
+    <ItemGroup>
+      <_PklOutputFiles Include="%(_PklResolved.OutputFile)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_PklNormalizedOutputPath>$([MSBuild]::NormalizeDirectory($(OutputPath)))</_PklNormalizedOutputPath>
+    </PropertyGroup>
+
+    <!-- find all files compiled by Pkl under the project output dir -->
+    <FindUnderPath Path="$(_PklNormalizedOutputPath)" Files="@(_PklOutputFiles)" UpdateToAbsolutePaths="true">
+      <Output TaskParameter="InPath" ItemName="_PublishablePklOutputFiles"/>
+    </FindUnderPath>
+
+    <ItemGroup>
+      <ResolvedFileToPublish Include="@(_PublishablePklOutputFiles)">
+        <RelativePath Condition=" $(PklOutputStyle) == 'Flat' ">%(FileName)%(Extension)</RelativePath>
+        <RelativePath Condition=" $(PklOutputStyle) == 'Recursive' ">$([MSBuild]::MakeRelative($(_PklNormalizedOutputPath), %(FullPath)))</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+</Project>

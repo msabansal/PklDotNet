@@ -1,0 +1,11 @@
+<Project TreatAsLocalProperty="TaskAssembly">
+  <PropertyGroup>
+    <TaskAssembly>$(MSBuildThisFileDirectory)..\tasks\netstandard2.0\Apple.Pkl.MSBuild.dll</TaskAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvailableItemName Include="Pkl" />
+  </ItemGroup>
+
+  <UsingTask TaskName="Pkl" AssemblyFile="$(TaskAssembly)" />
+</Project>

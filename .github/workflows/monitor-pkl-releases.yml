@@ -1,0 +1,54 @@
+name: Monitor Apple Pkl Releases
+
+on:
+  schedule:
+    # Check for new Apple Pkl releases every 12 hours
+    - cron: '0 */12 * * *'
+  
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  monitor-releases:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      
+      - name: Check for new Apple Pkl releases
+        id: check
+        run: |
+          # Get the latest tag from Apple Pkl repository using GitHub API
+          echo "Fetching latest Apple Pkl release tag..."
+          LATEST_TAG_INFO=$(curl -s https://api.github.com/repos/apple/pkl/releases/latest)
+          LATEST_VERSION=$(echo "$LATEST_TAG_INFO" | jq -r '.tag_name')
+          RELEASE_DATE=$(echo "$LATEST_TAG_INFO" | jq -r '.published_at')
+
+          echo "Latest Apple Pkl version: $LATEST_VERSION"
+          echo "Published: $RELEASE_DATE"
+
+          if git ls-remote --tags origin | grep -q "refs/tags/cli-v$LATEST_VERSION"; then
+            echo "No new version - already tracking $LATEST_VERSION"
+            echo "new_version=false" >> $GITHUB_OUTPUT
+          else
+            echo "New version detected: $LATEST_VERSION"
+            echo "new_version=true" >> $GITHUB_OUTPUT
+            echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Trigger Release workflow
+        if: steps.check.outputs.new_version == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Triggering download workflow for Apple Pkl ${{ steps.check.outputs.version }}"
+          
+          # Trigger the download workflow
+          curl -X POST --fail-with-body \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            -d '{"event_type": "pkl-release", "client_payload": {"version": "${{ steps.check.outputs.version }}", "release_url": "${{ steps.check.outputs.release_url }}"}}'

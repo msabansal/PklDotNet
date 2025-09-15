@@ -1,0 +1,11 @@
+appName = "MyApplication" 
+version = "1.0.0"
+database {
+  host = "localhost"
+  port = 5432
+  connectionString = "Host=\(host);Port=\(port);Database=myapp"
+}
+features {
+  enableLogging = true
+  maxRetries = 3
+}

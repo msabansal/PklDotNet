@@ -1,0 +1,4 @@
+// Simple properties file format test
+
+
+name = "test"

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Apple.Pkl.Cli.$rid$</id>
+    <version>$version$</version>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/msabansal/PklDotNet</projectUrl>
+    <description>Apple Pkl Command Line Interface tool for .NET Runtime Identifier $rid$</description>
+    <tags>Apple Pkl configuration language CLI</tags>
+    <authors>msabansal</authors>
+    <readme>README.md</readme>
+  </metadata>
+  <files>
+    <!-- Include the pkl binary for the specific RID -->
+    <file src="$Binary$" target="tools\$BinaryName$" />
+    <file src="build\Apple.Pkl.Cli.Common.props" target="build\" />
+    <!-- nuget convention requires .props file name to match package ID -->
+    <file src="build\Apple.Pkl.Cli.RID.props" target="build\Apple.Pkl.Cli.$rid$.props" />
+    <!-- nuget convention requires .props file name to match package ID -->
+    <file src="build\Apple.Pkl.Cli.RID.props" target="buildMultiTargeting\Apple.Pkl.Cli.$rid$.props" />
+    <file src="README.md"/>
+  </files>
+</package>

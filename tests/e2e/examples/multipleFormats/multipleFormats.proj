@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Apple.Pkl.MSBuild" Version="$(PackageVersion)" />
+    <PackageReference Include="Apple.Pkl.Cli.$(RuntimeSuffix)" Version="$(PackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Test multiple output formats -->
+    <Pkl Include="app.pkl" Format="json" />
+    <Pkl Include="app.pkl" Format="yaml" OutputFile="$(OutputPath)\app-config.yaml" />
+    <Pkl Include="app.pkl" Format="xml" OutputFile="$(OutputPath)\app-config.xml" />
+    <Pkl Include="simple.pkl" Format="properties" />
+  </ItemGroup>
+
+</Project>

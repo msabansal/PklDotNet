@@ -1,0 +1,29 @@
+// Nested structure for testing recursive output style
+components {
+  frontend {
+    config {
+      apiUrl = "http://localhost:3000/api"
+      debug = true
+      theme = "dark"
+    }
+  }
+  
+  backend {
+    config {
+      port = 8080
+      database {
+        url = "postgresql://localhost/backend_db"
+        poolSize = 10
+      }
+    }
+  }
+  
+  cache {
+    config {
+      type = "redis"
+      host = "localhost"
+      port = 6379
+      ttl = 3600
+    }
+  }
+}

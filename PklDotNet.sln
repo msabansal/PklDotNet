@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple.Pkl.Cli", "Apple.Pkl.Cli\Apple.Pkl.Cli.csproj", "{AD9D44A4-44D3-0E20-6EE3-5DB6B9DBD7D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apple.Pkl.MSBuild", "Apple.Pkl.MSBuild\Apple.Pkl.MSBuild.csproj", "{B8E5F8C0-402F-11D3-BF4B-00C04F79EFBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD9D44A4-44D3-0E20-6EE3-5DB6B9DBD7D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9D44A4-44D3-0E20-6EE3-5DB6B9DBD7D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9D44A4-44D3-0E20-6EE3-5DB6B9DBD7D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9D44A4-44D3-0E20-6EE3-5DB6B9DBD7D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8E5F8C0-402F-11D3-BF4B-00C04F79EFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8E5F8C0-402F-11D3-BF4B-00C04F79EFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8E5F8C0-402F-11D3-BF4B-00C04F79EFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8E5F8C0-402F-11D3-BF4B-00C04F79EFBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D13E7DC-9BEB-419D-B744-8AEEA66B3626}
+	EndGlobalSection
+EndGlobal

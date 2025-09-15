@@ -52,3 +52,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Pkl binaries (comment this out if you want to commit the binaries)
+pkl-binaries/

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Apple.Pkl.MSBuild" Version="$(PackageVersion)" />
+    <PackageReference Include="Apple.Pkl.Cli.$(RuntimeSuffix)" Version="$(PackageVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Include invalid Pkl file that should cause build to fail -->
+    <Pkl Include="invalid.pkl" Format="json" />
+  </ItemGroup>
+
+</Project>

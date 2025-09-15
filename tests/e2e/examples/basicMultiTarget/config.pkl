@@ -1,0 +1,24 @@
+// Basic configuration for testing MSBuild integration
+appName = "TestApp"
+version = "1.0.0"
+environment = "test"
+
+database {
+  host = "localhost"
+  port = 5432
+  name = "testdb"
+  connectionTimeout = 30
+}
+
+features {
+  enableLogging = true
+  enableMetrics = false
+  maxConnections = 100
+  allowedOrigins = List("http://localhost:3000", "https://example.com")
+}
+
+api {
+  baseUrl = "https://api.example.com"
+  timeout = 5000
+  retryCount = 3
+}

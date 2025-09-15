@@ -1,0 +1,3 @@
+<Project>
+  <Import Project="..\build\Apple.Pkl.Cli.Common.props" />
+</Project>

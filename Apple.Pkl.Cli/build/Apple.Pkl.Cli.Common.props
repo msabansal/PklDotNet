@@ -1,0 +1,12 @@
+<Project TreatAsLocalProperty="PklExecutableDirectory;PklNonWindowsExecutableName;PklWindowsExecutableName">
+  <PropertyGroup>
+    <PklExecutableDirectory>$(MSBuildThisFileDirectory)..\tools</PklExecutableDirectory>
+    <PklNonWindowsExecutableName>pkl</PklNonWindowsExecutableName>
+    <PklWindowsExecutableName>$(PklNonWindowsExecutableName).exe</PklWindowsExecutableName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" $(PklPath) == '' ">
+    <PklPath>$(PklExecutableDirectory)\$(PklNonWindowsExecutableName)</PklPath>
+    <PklPath Condition=" Exists('$(PklExecutableDirectory)\$(PklWindowsExecutableName)') ">$(PklExecutableDirectory)\$(PklWindowsExecutableName)</PklPath>
+  </PropertyGroup>
+</Project>
