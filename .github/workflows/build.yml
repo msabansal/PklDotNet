@@ -122,7 +122,6 @@ jobs:
 
   run-e2e-tests:
     name: Run E2E Tests
-    if: false  # temporarily disable E2E tests to speed up the workflow
     strategy:
       matrix:
         include:
