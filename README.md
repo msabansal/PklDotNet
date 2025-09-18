@@ -1,6 +1,6 @@
 # PklDotNet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg## Packages
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### Apple.Pkl.MSBuild
 
@@ -173,5 +173,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **[Apple Pkl](https://github.com/apple/pkl)** - The official Pkl language implementation
 - **[Pkl Language Website](https://pkl-lang.org/)** - Official documentation and tutorials
+
 
 
