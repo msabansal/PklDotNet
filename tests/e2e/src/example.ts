@@ -87,6 +87,10 @@ export class Example {
         cwd: this.projectDir,
         stdio: "pipe",
         encoding: "utf-8",
+        env: {
+          ...process.env,
+          DOTNET_NOLOGO: 'true'
+        }
       },
     );
 
@@ -108,4 +112,5 @@ export class Example {
 
     throw new Error(`Unexpected ${tool} exit code: ${result.status}`);
   }
+
 }
